@@ -1,0 +1,42 @@
+# 通用
+.DS_Store
+*.log
+*.tmp
+*.temp
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# 后端 - Java/Maven
+backend/target/
+backend/*.jar
+backend/*.war
+backend/*.class
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
+
+# 前端 - Node.js
+frontend-user/node_modules/
+frontend-user/dist/
+frontend-user/.cache/
+frontend-user/*.local
+
+# Docker
+docker-compose.override.yml
+
+# 数据库
+*.sql.bak
+
+# 日志
+logs/
+*.log
