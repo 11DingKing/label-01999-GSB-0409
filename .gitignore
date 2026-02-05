@@ -1,12 +1,14 @@
-# 通用
+# ==================== 通用 ====================
 .DS_Store
 *.log
 *.tmp
 *.temp
+.env
 .env.local
 .env.*.local
+*.bak
 
-# IDE
+# ==================== IDE ====================
 .idea/
 .vscode/
 *.iml
@@ -15,8 +17,11 @@
 .project
 .classpath
 .settings/
+*.swp
+*.swo
+*~
 
-# 后端 - Java/Maven
+# ==================== 后端 (backend) ====================
 backend/target/
 backend/*.jar
 backend/*.war
@@ -24,19 +29,37 @@ backend/*.class
 backend/.mvn/
 backend/mvnw
 backend/mvnw.cmd
+backend/logs/
 
-# 前端 - Node.js
+# ==================== 前端用户端 (frontend-user) ====================
 frontend-user/node_modules/
 frontend-user/dist/
 frontend-user/.cache/
 frontend-user/*.local
+frontend-user/.env.local
+frontend-user/.env.*.local
 
-# Docker
+# ==================== 前端管理后台 (frontend-admin) ====================
+frontend-admin/node_modules/
+frontend-admin/dist/
+frontend-admin/.cache/
+frontend-admin/*.local
+frontend-admin/.env.local
+frontend-admin/.env.*.local
+
+# ==================== 小程序 (frontend-mp) ====================
+frontend-mp/node_modules/
+frontend-mp/dist/
+frontend-mp/miniprogram_npm/
+frontend-mp/.cache/
+frontend-mp/*.local
+
+# ==================== Docker ====================
 docker-compose.override.yml
 
-# 数据库
+# ==================== 数据库 ====================
 *.sql.bak
 
-# 日志
+# ==================== 日志 ====================
 logs/
 *.log

@@ -1,121 +1,93 @@
 <template>
   <div class="home-page">
     <div class="page-container">
-      <!-- 顶部导航 -->
-      <div class="top-nav">
-        <div class="nav-left">
-          <span class="logo">🎰</span>
-          <span class="title">幸运抽奖</span>
+      <!-- 页面头部 -->
+      <div class="page-header">
+        <div class="header-content">
+          <h1 class="page-title">活动大厅</h1>
+          <p class="page-subtitle">参与精彩活动，赢取丰厚奖品</p>
         </div>
-        <div class="nav-right" v-if="userStore.isLoggedIn" @click="showUserMenu = true">
-          <el-avatar :src="userStore.userInfo?.avatar" :size="32" class="avatar-btn" />
-        </div>
-        <div class="nav-right" v-else>
-          <el-button type="primary" size="small" @click="router.push('/login')">
-            登录
-          </el-button>
+        <div class="header-stats" v-if="userStore.isLoggedIn">
+          <div class="stat-item">
+            <span class="stat-value">{{ activities.length }}</span>
+            <span class="stat-label">进行中活动</span>
+          </div>
         </div>
       </div>
 
-      <!-- 用户菜单弹窗 -->
-      <el-drawer
-        v-model="showUserMenu"
-        direction="rtl"
-        size="70%"
-        :with-header="false"
-        class="user-drawer"
-      >
-        <div class="user-menu">
-          <div class="user-header">
-            <el-avatar :src="userStore.userInfo?.avatar" :size="64" />
-            <div class="user-info">
-              <span class="nickname">{{ userStore.userInfo?.nickname || userStore.userInfo?.username }}</span>
-              <span class="phone">{{ userStore.userInfo?.phone || '未绑定手机' }}</span>
-            </div>
-          </div>
-          <div class="menu-list">
-            <div class="menu-item" @click="goToProfile">
-              <el-icon><User /></el-icon>
-              <span>个人资料</span>
-              <el-icon class="arrow"><ArrowRight /></el-icon>
-            </div>
-            <div class="menu-item" @click="goToRecords">
-              <el-icon><Trophy /></el-icon>
-              <span>我的奖品</span>
-              <el-icon class="arrow"><ArrowRight /></el-icon>
-            </div>
-            <div class="menu-item logout" @click="handleLogout">
-              <el-icon><SwitchButton /></el-icon>
-              <span>退出登录</span>
-            </div>
-          </div>
-        </div>
-      </el-drawer>
-
       <!-- 中奖滚动 -->
       <div class="winner-marquee" v-if="latestWinners.length > 0">
-        <div class="marquee-content">
-          <div class="winner-item" v-for="(winner, index) in latestWinners" :key="index">
-            <el-avatar :src="winner.avatar" :size="20" />
-            <span class="nickname">{{ winner.nickname }}</span>
-            <span class="text">抽中了</span>
-            <span class="prize">{{ winner.prizeName }}</span>
+        <div class="marquee-label">
+          <el-icon><Bell /></el-icon>
+          <span>中奖播报</span>
+        </div>
+        <div class="marquee-wrapper">
+          <div class="marquee-content">
+            <div class="winner-item" v-for="(winner, index) in [...latestWinners, ...latestWinners]" :key="index">
+              <el-avatar :src="winner.avatar" :size="24" />
+              <span class="nickname">{{ winner.nickname }}</span>
+              <span class="text">抽中了</span>
+              <span class="prize">{{ winner.prizeName }}</span>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- 活动列表 -->
-      <div class="section-title">
-        <el-icon><Present /></el-icon>
-        <span>热门活动</span>
-      </div>
-
-      <div class="activity-list" v-loading="loading">
-        <div
-          class="activity-card"
-          v-for="activity in activities"
-          :key="activity.id"
-          @click="goToActivity(activity)"
-        >
-          <div class="activity-cover">
-            <img :src="activity.coverImage" :alt="activity.name" />
-            <div class="activity-status" :class="getStatusClass(activity.statusText)">
-              {{ activity.statusText }}
-            </div>
+      <div class="activity-section">
+        <div class="section-header">
+          <div class="section-title">
+            <el-icon><Present /></el-icon>
+            <span>热门活动</span>
           </div>
-          <div class="activity-info">
-            <h3 class="activity-name">{{ activity.name }}</h3>
-            <p class="activity-desc">{{ activity.description }}</p>
-            <div class="activity-meta">
-              <span class="meta-item">
-                <el-icon><Clock /></el-icon>
-                {{ formatDate(activity.endTime) }} 截止
-              </span>
-              <span class="meta-item">
-                <el-icon><Ticket /></el-icon>
-                每日{{ activity.dailyLimit }}次
-              </span>
+          <el-button text type="primary" @click="fetchActivities">
+            <el-icon><Refresh /></el-icon>
+            刷新
+          </el-button>
+        </div>
+
+        <div class="activity-grid" v-loading="loading">
+          <div
+            class="activity-card"
+            v-for="activity in activities"
+            :key="activity.id"
+            @click="goToActivity(activity)"
+          >
+            <div class="activity-cover">
+              <img :src="activity.coverImage" :alt="activity.name" />
+              <div class="activity-status" :class="getStatusClass(activity.statusText)">
+                {{ activity.statusText }}
+              </div>
+            </div>
+            <div class="activity-info">
+              <h3 class="activity-name">{{ activity.name }}</h3>
+              <p class="activity-desc">{{ activity.description }}</p>
+              <div class="activity-meta">
+                <div class="meta-item">
+                  <el-icon><Clock /></el-icon>
+                  <span>{{ formatDate(activity.endTime) }} 截止</span>
+                </div>
+                <div class="meta-item">
+                  <el-icon><Ticket /></el-icon>
+                  <span>每日{{ activity.dailyLimit }}次</span>
+                </div>
+              </div>
+              <div class="activity-action">
+                <el-button 
+                  type="primary" 
+                  :disabled="activity.statusText !== '进行中'"
+                  class="join-btn"
+                >
+                  {{ activity.statusText === '进行中' ? '立即参与' : activity.statusText }}
+                </el-button>
+              </div>
             </div>
           </div>
         </div>
 
-        <el-empty v-if="!loading && activities.length === 0" description="暂无活动" />
-      </div>
-    </div>
-
-    <!-- 底部导航 -->
-    <div class="bottom-nav">
-      <div class="nav-item active">
-        <el-icon><HomeFilled /></el-icon>
-        <span>首页</span>
-      </div>
-      <div class="nav-item" @click="router.push('/records')">
-        <el-icon><Trophy /></el-icon>
-        <span>我的奖品</span>
-      </div>
-      <div class="nav-item" @click="router.push('/profile')">
-        <el-icon><User /></el-icon>
-        <span>我的</span>
+        <el-empty v-if="!loading && activities.length === 0" description="暂无活动">
+          <el-button type="primary" @click="fetchActivities">刷新试试</el-button>
+        </el-empty>
       </div>
     </div>
   </div>
@@ -135,7 +107,6 @@ const userStore = useUserStore()
 const loading = ref(false)
 const activities = ref([])
 const latestWinners = ref([])
-const showUserMenu = ref(false)
 
 onMounted(() => {
   fetchActivities()
@@ -177,22 +148,6 @@ function goToActivity(activity) {
   router.push(`/activity/${activity.id}`)
 }
 
-function goToProfile() {
-  showUserMenu.value = false
-  router.push('/profile')
-}
-
-function goToRecords() {
-  showUserMenu.value = false
-  router.push('/records')
-}
-
-function handleLogout() {
-  showUserMenu.value = false
-  userStore.logout()
-  ElMessage.success('已退出登录')
-}
-
 function getStatusClass(status) {
   const map = {
     '进行中': 'ongoing',
@@ -205,127 +160,197 @@ function getStatusClass(status) {
 
 function formatDate(dateStr) {
   const date = new Date(dateStr)
-  return `${date.getMonth() + 1}月${date.getDate()}日`
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 }
 </script>
 
 <style lang="scss" scoped>
 .home-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #f8fafc;
 }
 
 .page-container {
-  padding: 16px;
-  padding-bottom: 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
 }
 
-.top-nav {
+.page-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 8px 0;
-  margin-bottom: 16px;
-
-  .nav-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    .logo {
-      font-size: 28px;
-    }
-
-    .title {
-      font-size: 20px;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  
+  .header-content {
+    .page-title {
+      font-size: 32px;
       font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    
+    .page-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+  }
+  
+  .header-stats {
+    display: flex;
+    gap: 24px;
+    
+    .stat-item {
+      text-align: center;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border-radius: 12px;
       color: #fff;
+      
+      .stat-value {
+        display: block;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      
+      .stat-label {
+        font-size: 13px;
+        opacity: 0.9;
+      }
     }
   }
 }
 
 .winner-marquee {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  padding: 8px 16px;
-  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-radius: 12px;
+  padding: 12px 20px;
+  margin-bottom: 32px;
   overflow: hidden;
+  
+  .marquee-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #92400e;
+    font-weight: 600;
+    font-size: 14px;
+    padding-right: 20px;
+    border-right: 1px solid rgba(146, 64, 14, 0.2);
+    margin-right: 20px;
+    flex-shrink: 0;
+    
+    .el-icon {
+      font-size: 18px;
+    }
+  }
+  
+  .marquee-wrapper {
+    flex: 1;
+    overflow: hidden;
+  }
 
   .marquee-content {
     display: flex;
-    gap: 24px;
-    animation: marquee 20s linear infinite;
+    gap: 40px;
+    animation: marquee 30s linear infinite;
   }
 
   .winner-item {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     white-space: nowrap;
-    color: #fff;
-    font-size: 13px;
+    color: #78350f;
+    font-size: 14px;
+
+    .nickname {
+      font-weight: 500;
+    }
+    
+    .text {
+      color: #92400e;
+    }
 
     .prize {
-      color: var(--secondary-color);
+      color: #dc2626;
       font-weight: 600;
     }
   }
 }
 
 @keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.activity-section {
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      
+      .el-icon {
+        color: var(--primary-color);
+      }
+    }
   }
 }
 
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #fff;
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 16px;
-}
-
-.activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
 }
 
 .activity-card {
   background: #fff;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-xl);
+    
+    .activity-cover img {
+      transform: scale(1.05);
+    }
   }
 
   .activity-cover {
     position: relative;
-    height: 160px;
+    height: 200px;
+    overflow: hidden;
 
     img {
+      width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform 0.3s ease;
     }
 
     .activity-status {
       position: absolute;
-      top: 12px;
-      right: 12px;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 12px;
+      top: 16px;
+      right: 16px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
       font-weight: 600;
 
       &.ongoing {
@@ -339,164 +364,84 @@ function formatDate(dateStr) {
       }
 
       &.ended, &.offline {
-        background: #999;
+        background: #6b7280;
         color: #fff;
       }
     }
   }
 
   .activity-info {
-    padding: 16px;
+    padding: 20px;
 
     .activity-name {
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 600;
       color: var(--text-primary);
       margin-bottom: 8px;
     }
 
     .activity-desc {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--text-secondary);
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      line-height: 1.6;
     }
 
     .activity-meta {
       display: flex;
-      gap: 16px;
+      gap: 20px;
+      margin-bottom: 16px;
 
       .meta-item {
         display: flex;
         align-items: center;
-        gap: 4px;
-        font-size: 12px;
-        color: var(--text-secondary);
-      }
-    }
-  }
-}
-
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 64px;
-  background: #fff;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
-
-  .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    color: var(--text-secondary);
-    font-size: 12px;
-    cursor: pointer;
-    transition: color 0.3s ease;
-
-    .el-icon {
-      font-size: 24px;
-    }
-
-    &.active {
-      color: var(--primary-color);
-    }
-
-    &:hover {
-      color: var(--primary-color);
-    }
-  }
-}
-
-.avatar-btn {
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  
-  &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-}
-
-.user-menu {
-  padding: 24px 16px;
-  
-  .user-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 16px;
-    
-    .user-info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      
-      .nickname {
-        font-size: 18px;
-        font-weight: 600;
-        color: #333;
-      }
-      
-      .phone {
+        gap: 6px;
         font-size: 13px;
-        color: #999;
-      }
-    }
-  }
-  
-  .menu-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    
-    .menu-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 12px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.2s;
-      
-      .el-icon {
-        font-size: 20px;
-        color: #666;
-      }
-      
-      span {
-        flex: 1;
-        font-size: 15px;
-        color: #333;
-      }
-      
-      .arrow {
-        font-size: 16px;
-        color: #ccc;
-      }
-      
-      &:hover {
-        background: #f5f5f5;
-      }
-      
-      &.logout {
-        margin-top: 24px;
+        color: var(--text-secondary);
         
-        .el-icon, span {
-          color: #f56c6c;
+        .el-icon {
+          font-size: 16px;
+          color: var(--text-muted);
         }
       }
     }
+    
+    .activity-action {
+      .join-btn {
+        width: 100%;
+        height: 44px;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: 10px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 16px;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+    
+    .header-stats {
+      width: 100%;
+      
+      .stat-item {
+        flex: 1;
+      }
+    }
+  }
+  
+  .activity-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

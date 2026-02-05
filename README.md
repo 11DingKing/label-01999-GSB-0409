@@ -1,9 +1,47 @@
 # 幸运抽奖系统
 
-## How to Run
+一个基于 Spring Boot + Vue 3 的在线抽奖平台，支持多活动管理、九宫格抽奖、奖品领取等功能。
+
+## 项目结构
+
+```
+├── backend/                 # 后端服务 (Spring Boot)
+├── frontend-user/           # 用户端前端 (Vue 3 + Element Plus)
+├── docker-compose.yml       # Docker Compose 配置
+└── docs/                    # 项目文档
+```
+
+## 技术栈
+
+### 后端
+- Java 17
+- Spring Boot 3.x
+- MyBatis Plus
+- MySQL 8.0
+- Redis 7
+- JWT 认证
+
+### 前端
+- Vue 3
+- Vite 5
+- Element Plus
+- Pinia
+- Vue Router
+
+## 快速开始
+
+### 环境要求
+- Docker 20.10+
+- Docker Compose 2.0+
+
+### 一键启动
 
 ```bash
-# 使用Docker Compose一键启动
+# 克隆项目
+git clone <repository-url>
+cd lottery-system
+
+# 启动所有服务
 docker-compose up --build -d
 
 # 查看服务状态
@@ -11,83 +49,95 @@ docker-compose ps
 
 # 查看日志
 docker-compose logs -f
-
-# 停止服务
-docker-compose down
 ```
 
-## Services
+### 访问地址
 
-| 服务 | 端口 | 说明 |
+| 服务 | 地址 | 说明 |
 |------|------|------|
-| frontend-user | 8080 | 用户端前端 |
-| backend | 8088 | 后端API服务 |
-| mysql | 3306 | MySQL数据库 |
-| redis | 6379 | Redis缓存 |
+| 用户端前端 | http://localhost:8081 | 用户抽奖界面 |
+| 后端API | http://localhost:8088 | REST API |
+| MySQL | localhost:3306 | 数据库 |
+| Redis | localhost:6379 | 缓存 |
 
-访问地址：
-- 用户端：http://localhost:8080
+## 功能特性
 
-## 测试账号
-
-| 用户名 | 密码 | 说明 |
-|--------|------|------|
-| testuser | 123456 | 测试用户 |
-
-或直接注册新账号使用。
-
-## 题目内容
-
-使用vue3+springboot写一抽奖程序，满足真实产品形态的用户端架构。要求：
-- 可运行验证：提供完整启动步骤
-- 全功能覆盖：核心需求100%实现
-- 模块化设计：Controller -> Service -> Mapper -> Entity 分层
-- 健壮性：全局异常处理、日志记录、参数校验
-- 美观度：视觉分层、布局对齐、交互反馈
-- Docker规范：支持ARM和X86跨平台
-
-## 项目介绍
-
-基于 Vue3 + Spring Boot 3 的抽奖系统，包含完整的用户端功能。
-
-### 技术栈
-
-**后端：**
-- Spring Boot 3.2.5
-- MyBatis-Plus 3.5.5
-- MySQL 8.0
-- Redis 7
-- JWT认证
-
-**前端：**
-- Vue 3.4
-- Vite 5
-- Pinia
-- Element Plus
-- SCSS
-
-### 功能特性
-
+### 用户端
 - 用户注册/登录
-- 活动列表展示
-- 转盘抽奖
+- 活动列表浏览
+- 九宫格抽奖
 - 中奖记录查看
 - 奖品领取
-- 个人中心
+- 个人信息管理
 
-### 项目结构
+### 系统特性
+- JWT Token 认证
+- 每日抽奖次数限制
+- 奖品库存管理
+- 中奖概率配置
+- 实时中奖播报
 
+## 开发指南
+
+### 本地开发
+
+#### 后端
+```bash
+cd backend
+mvn spring-boot:run
 ```
-├── backend/                 # 后端服务
-│   ├── src/main/java/      # Java源码
-│   ├── src/main/resources/ # 配置文件和SQL
-│   ├── Dockerfile
-│   └── pom.xml
-├── frontend-user/          # 用户端前端
-│   ├── src/
-│   ├── Dockerfile
-│   └── package.json
-├── docs/                   # 设计文档
-├── docker-compose.yml
-└── README.md
+
+#### 前端
+```bash
+cd frontend-user
+npm install
+npm run dev
 ```
+
+### 构建镜像
+
+```bash
+# 构建所有服务
+docker-compose build
+
+# 单独构建某个服务
+docker-compose build backend
+docker-compose build frontend-user
+```
+
+### 验证跨平台镜像
+
+```bash
+# 验证镜像是否支持 ARM 架构
+docker pull --platform linux/arm64 nginx:1.25-alpine
+docker pull --platform linux/arm64 eclipse-temurin:17-jre
+```
+
+## 配置说明
+
+### 环境变量
+
+| 变量名 | 默认值 | 说明 |
+|--------|--------|------|
+| MYSQL_HOST | mysql | MySQL 主机 |
+| MYSQL_PORT | 3306 | MySQL 端口 |
+| MYSQL_DATABASE | lottery_db | 数据库名 |
+| MYSQL_USER | root | 数据库用户 |
+| MYSQL_PASSWORD | root123456 | 数据库密码 |
+| REDIS_HOST | redis | Redis 主机 |
+| REDIS_PORT | 6379 | Redis 端口 |
+| JWT_SECRET | - | JWT 密钥 |
+
+## 停止服务
+
+```bash
+# 停止所有服务
+docker-compose down
+
+# 停止并删除数据卷
+docker-compose down -v
+```
+
+## License
+
+MIT

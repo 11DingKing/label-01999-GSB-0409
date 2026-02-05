@@ -1,18 +1,22 @@
-# 多阶段构建 - 构建阶段
+# 构建阶段
 FROM --platform=$BUILDPLATFORM node:20-alpine AS builder
 
 WORKDIR /app
 
-# 复制package文件并安装依赖
+# 复制依赖文件
 COPY package*.json ./
+
+# 安装依赖
 RUN npm install
 
-# 复制源代码并构建
+# 复制源代码
 COPY . .
+
+# 构建应用
 RUN npm run build
 
-# 运行阶段 - 使用跨平台nginx镜像
-FROM nginx:alpine
+# 生产阶段 - 使用跨平台nginx镜像
+FROM nginx:1.25-alpine
 
 # 复制构建产物
 COPY --from=builder /app/dist /usr/share/nginx/html

@@ -23,6 +23,6 @@ public class RegisterRequest {
     @Size(max = 20, message = "昵称长度不能超过20个字符")
     private String nickname;
 
-    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确")
+    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式不正确，请输入1开头的11位数字，第二位需为3-9")
     private String phone;
 }
