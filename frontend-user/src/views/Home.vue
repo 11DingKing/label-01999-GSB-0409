@@ -100,6 +100,7 @@ import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { getActivityList } from '@/api/activity'
 import { getLatestWinners } from '@/api/record'
+import { getImageUrl } from '@/utils/image'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -117,7 +118,7 @@ async function fetchActivities() {
   loading.value = true
   try {
     const res = await getActivityList()
-    activities.value = res.data
+    activities.value = res.data.map(a => ({ ...a, coverImage: getImageUrl(a.coverImage) }))
   } catch (error) {
     console.error('获取活动列表失败:', error)
   } finally {

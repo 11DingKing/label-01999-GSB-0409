@@ -19,4 +19,5 @@ public class PrizeResponse {
     private Integer remainingCount;
     private BigDecimal probability;
     private Integer sortOrder;
+    private Integer status;
 }

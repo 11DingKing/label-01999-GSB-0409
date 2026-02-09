@@ -1,0 +1,364 @@
+// 全局样式变量 - 与用户端保持一致
+:root {
+  --primary-color: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-light: #e0e7ff;
+  --secondary-color: #f59e0b;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --bg-color: #f8fafc;
+  --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --card-bg: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --border-color: #e2e8f0;
+  --border-radius: 12px;
+  --border-radius-lg: 16px;
+  --border-radius-sm: 8px;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --transition: all 0.2s ease;
+  --sidebar-width: 240px;
+  --header-height: 64px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+  &:hover { background: #94a3b8; }
+}
+
+// 通用卡片
+.card {
+  background: var(--card-bg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  
+  .card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .card-body {
+    padding: 24px;
+  }
+}
+
+// 页面容器
+.page-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+// 页面头部
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  
+  .title-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-gradient);
+    border-radius: var(--border-radius);
+    color: white;
+    font-size: 20px;
+  }
+}
+
+// 统计卡片
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  border-radius: var(--border-radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: var(--transition);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    
+    &.primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+    &.success { background: linear-gradient(135deg, #10b981, #059669); }
+    &.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    &.danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+  }
+  
+  .stat-content {
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+    .stat-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+  }
+}
+
+// Element Plus 样式覆盖
+.el-button--primary {
+  --el-button-bg-color: var(--primary-color) !important;
+  --el-button-border-color: var(--primary-color) !important;
+  --el-button-hover-bg-color: var(--primary-hover) !important;
+  --el-button-hover-border-color: var(--primary-hover) !important;
+}
+
+.el-button {
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+}
+
+.el-input__wrapper {
+  border-radius: var(--border-radius-sm);
+  box-shadow: 0 0 0 1px var(--border-color) inset !important;
+  
+  &:hover { box-shadow: 0 0 0 1px var(--primary-color) inset !important; }
+  &.is-focus { box-shadow: 0 0 0 2px var(--primary-color) inset !important; }
+}
+
+.el-dialog {
+  border-radius: var(--border-radius-lg) !important;
+  
+  .el-dialog__header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+    margin-right: 0;
+  }
+  .el-dialog__body { padding: 24px; }
+  .el-dialog__footer {
+    padding: 16px 24px 20px;
+    border-top: 1px solid var(--border-color);
+  }
+}
+
+.el-table {
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  
+  th.el-table__cell {
+    background-color: #f8fafc !important;
+    font-weight: 600;
+  }
+  
+  .el-table__row:hover > td { background-color: #f8fafc !important; }
+}
+
+.el-tag {
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+// 图片上传
+.image-uploader {
+  .upload-trigger {
+    width: 160px;
+    height: 120px;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    background: #fafafa;
+    
+    &:hover {
+      border-color: var(--primary-color);
+      background: var(--primary-light);
+    }
+    
+    .upload-icon {
+      font-size: 32px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    
+    .upload-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+  }
+  
+  .preview-image {
+    width: 160px;
+    height: 120px;
+    border-radius: var(--border-radius);
+    object-fit: cover;
+    border: 1px solid var(--border-color);
+  }
+}
+
+// 概率条
+.probability-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  .bar {
+    flex: 1;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    
+    .fill {
+      height: 100%;
+      background: var(--bg-gradient);
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+  }
+  
+  .value {
+    min-width: 60px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+}
+
+// 库存显示
+.stock-display {
+  .stock-bar {
+    width: 80px;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+    
+    .fill {
+      height: 100%;
+      border-radius: 3px;
+      &.high { background: var(--success-color); }
+      &.medium { background: var(--warning-color); }
+      &.low { background: var(--error-color); }
+    }
+  }
+}
+
+// 提示卡片
+.alert-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: var(--border-radius);
+  margin-bottom: 24px;
+  
+  &.warning {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 1px solid #fcd34d;
+    
+    .alert-icon { color: #d97706; }
+    .alert-text { color: #92400e; }
+  }
+  
+  &.success {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    border: 1px solid #6ee7b7;
+    
+    .alert-icon { color: #059669; }
+    .alert-text { color: #065f46; }
+  }
+  
+  .alert-icon { font-size: 24px; }
+  .alert-content { flex: 1; }
+  .alert-title { font-weight: 600; margin-bottom: 2px; }
+  .alert-text { font-size: 13px; }
+}
+
+// 操作按钮组
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+// 表单提示
+.form-tip {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+// 响应式
+@media (max-width: 768px) {
+  .page-container { padding: 16px; }
+  .page-header { flex-direction: column; gap: 16px; align-items: flex-start; }
+  .stat-cards { grid-template-columns: 1fr; }
+}

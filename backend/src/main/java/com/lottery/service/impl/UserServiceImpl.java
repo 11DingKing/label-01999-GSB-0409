@@ -51,18 +51,20 @@ public class UserServiceImpl implements UserService {
                 request.getNickname() : request.getUsername());
         user.setPhone(request.getPhone());
         user.setAvatar("https://api.dicebear.com/7.x/avataaars/svg?seed=" + request.getUsername());
+        user.setRole("USER");
         user.setStatus(1);
 
         userMapper.insert(user);
         log.info("用户注册成功: userId={}, username={}", user.getId(), user.getUsername());
 
         // 生成Token并返回
-        String token = jwtUtil.generateToken(user.getId(), user.getUsername());
+        String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole());
         return LoginResponse.builder()
                 .userId(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
                 .avatar(user.getAvatar())
+                .role(user.getRole())
                 .token(token)
                 .build();
     }
@@ -90,12 +92,13 @@ public class UserServiceImpl implements UserService {
         log.info("用户登录成功: userId={}, username={}", user.getId(), user.getUsername());
 
         // 生成Token并返回
-        String token = jwtUtil.generateToken(user.getId(), user.getUsername());
+        String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole());
         return LoginResponse.builder()
                 .userId(user.getId())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
                 .avatar(user.getAvatar())
+                .role(user.getRole())
                 .token(token)
                 .build();
     }

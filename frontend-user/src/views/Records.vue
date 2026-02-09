@@ -132,6 +132,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getMyRecords, receivePrize } from '@/api/record'
+import { getImageUrl } from '@/utils/image'
 
 const router = useRouter()
 
@@ -140,7 +141,7 @@ const records = ref([])
 const receivingId = ref(null)
 const filterStatus = ref(null)
 
-const defaultImage = 'https://img.icons8.com/color/200/gift.png'
+const defaultImage = '/api/images/prizes/thanks.svg'
 
 const filteredRecords = computed(() => {
   if (filterStatus.value === null) return records.value
@@ -170,7 +171,7 @@ async function fetchRecords() {
   loading.value = true
   try {
     const res = await getMyRecords()
-    records.value = res.data
+    records.value = res.data.map(r => ({ ...r, prizeImage: getImageUrl(r.prizeImage) }))
   } catch (error) {
     console.error('获取中奖记录失败:', error)
   } finally {

@@ -167,4 +167,92 @@ public class PrizeRecordServiceImpl implements PrizeRecordService {
         }
         return nickname.charAt(0) + "***" + nickname.charAt(nickname.length() - 1);
     }
+
+    @Override
+    public List<PrizeRecordResponse> getAllRecords(Long activityId) {
+        LambdaQueryWrapper<PrizeRecord> wrapper = new LambdaQueryWrapper<PrizeRecord>()
+                .isNotNull(PrizeRecord::getPrizeId)
+                .ne(PrizeRecord::getPrizeName, "谢谢参与")
+                .orderByDesc(PrizeRecord::getDrawTime);
+        
+        if (activityId != null) {
+            wrapper.eq(PrizeRecord::getActivityId, activityId);
+        }
+        
+        List<PrizeRecord> records = prizeRecordMapper.selectList(wrapper);
+
+        if (records.isEmpty()) {
+            return List.of();
+        }
+
+        // 批量查询用户、奖品和活动信息
+        List<Long> userIds = records.stream().map(PrizeRecord::getUserId).distinct().collect(Collectors.toList());
+        List<Long> prizeIds = records.stream().map(PrizeRecord::getPrizeId).filter(id -> id != null).distinct().collect(Collectors.toList());
+        List<Long> activityIds = records.stream().map(PrizeRecord::getActivityId).filter(id -> id != null).distinct().collect(Collectors.toList());
+
+        Map<Long, User> userMap = userMapper.selectBatchIds(userIds).stream().collect(Collectors.toMap(User::getId, u -> u));
+        Map<Long, Prize> prizeMap = prizeIds.isEmpty() ? Map.of() : prizeMapper.selectBatchIds(prizeIds).stream().collect(Collectors.toMap(Prize::getId, p -> p));
+        Map<Long, Activity> activityMap = activityIds.isEmpty() ? Map.of() : activityMapper.selectBatchIds(activityIds).stream().collect(Collectors.toMap(Activity::getId, a -> a));
+
+        return records.stream()
+                .map(record -> {
+                    User user = userMap.get(record.getUserId());
+                    Prize prize = prizeMap.get(record.getPrizeId());
+                    Activity activity = activityMap.get(record.getActivityId());
+                    
+                    return PrizeRecordResponse.builder()
+                            .id(record.getId())
+                            .userId(record.getUserId())
+                            .username(user != null ? user.getUsername() : null)
+                            .nickname(user != null ? user.getNickname() : null)
+                            .prizeId(record.getPrizeId())
+                            .prizeName(record.getPrizeName())
+                            .prizeImage(prize != null ? prize.getImage() : null)
+                            .activityId(record.getActivityId())
+                            .activityName(activity != null ? activity.getName() : null)
+                            .status(record.getStatus())
+                            .statusText(record.getStatus() == 0 ? "待领取" : "已领取")
+                            .drawTime(record.getDrawTime())
+                            .receiveTime(record.getReceiveTime())
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public java.util.Map<String, Object> getActivityStats(Long activityId) {
+        java.util.Map<String, Object> stats = new java.util.HashMap<>();
+        
+        // 总中奖数（排除谢谢参与）
+        Long totalWins = prizeRecordMapper.selectCount(
+                new LambdaQueryWrapper<PrizeRecord>()
+                        .eq(activityId != null, PrizeRecord::getActivityId, activityId)
+                        .isNotNull(PrizeRecord::getPrizeId)
+                        .ne(PrizeRecord::getPrizeName, "谢谢参与")
+        );
+        
+        // 已领取数
+        Long receivedCount = prizeRecordMapper.selectCount(
+                new LambdaQueryWrapper<PrizeRecord>()
+                        .eq(activityId != null, PrizeRecord::getActivityId, activityId)
+                        .isNotNull(PrizeRecord::getPrizeId)
+                        .ne(PrizeRecord::getPrizeName, "谢谢参与")
+                        .eq(PrizeRecord::getStatus, 1)
+        );
+        
+        // 待领取数
+        Long pendingCount = prizeRecordMapper.selectCount(
+                new LambdaQueryWrapper<PrizeRecord>()
+                        .eq(activityId != null, PrizeRecord::getActivityId, activityId)
+                        .isNotNull(PrizeRecord::getPrizeId)
+                        .ne(PrizeRecord::getPrizeName, "谢谢参与")
+                        .eq(PrizeRecord::getStatus, 0)
+        );
+        
+        stats.put("totalWins", totalWins);
+        stats.put("receivedCount", receivedCount);
+        stats.put("pendingCount", pendingCount);
+        
+        return stats;
+    }
 }

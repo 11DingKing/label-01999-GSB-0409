@@ -17,6 +17,7 @@ CREATE TABLE `user` (
     `nickname` VARCHAR(50) DEFAULT NULL COMMENT '昵称',
     `phone` VARCHAR(20) DEFAULT NULL COMMENT '手机号',
     `avatar` VARCHAR(255) DEFAULT NULL COMMENT '头像URL',
+    `role` VARCHAR(20) NOT NULL DEFAULT 'USER' COMMENT '角色：USER-普通用户，ADMIN-管理员',
     `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态：0-禁用，1-正常',
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -101,21 +102,21 @@ CREATE TABLE `user_draw_count` (
 -- 插入测试数据
 -- 测试用户会在应用启动时自动创建/更新
 
--- 测试活动（使用固定封面图）
+-- 测试活动（使用本地图片）
 INSERT INTO `activity` (`name`, `description`, `cover_image`, `start_time`, `end_time`, `daily_limit`, `total_limit`) VALUES
-('新春抽奖活动', '新春佳节，好礼相送！参与抽奖赢取丰厚奖品！', 'https://img.icons8.com/color/800/confetti.png', '2025-01-01 00:00:00', '2026-12-31 23:59:59', 5, 0),
-('周年庆典抽奖', '感恩回馈，周年庆典大抽奖！', 'https://img.icons8.com/color/800/birthday.png', '2025-01-01 00:00:00', '2026-12-31 23:59:59', 3, 100);
+('新春抽奖活动', '新春佳节，好礼相送！参与抽奖赢取丰厚奖品！', '/images/activities/spring.svg', '2025-01-01 00:00:00', '2026-12-31 23:59:59', 5, 0),
+('周年庆典抽奖', '感恩回馈，周年庆典大抽奖！', '/images/activities/anniversary.svg', '2025-01-01 00:00:00', '2026-12-31 23:59:59', 3, 100);
 
--- 测试奖品（使用真实图片URL）
+-- 测试奖品（使用本地图片）
 INSERT INTO `prize` (`activity_id`, `name`, `image`, `total_count`, `remaining_count`, `probability`, `sort_order`) VALUES
-(1, 'iPhone 15 Pro', 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-15-pro-finish-select-202309-6-1inch-naturaltitanium?wid=200&hei=200&fmt=png-alpha', 5, 5, 0.01, 1),
-(1, 'AirPods Pro', 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MQD83?wid=200&hei=200&fmt=png-alpha', 20, 20, 0.05, 2),
-(1, '100元红包', 'https://img.icons8.com/3d-fluency/200/money.png', 100, 100, 0.10, 3),
-(1, '50元红包', 'https://img.icons8.com/3d-fluency/200/stack-of-money.png', 200, 200, 0.15, 4),
-(1, '10元红包', 'https://img.icons8.com/3d-fluency/200/receive-cash.png', 500, 500, 0.20, 5),
-(1, '谢谢参与', 'https://img.icons8.com/fluency/200/good-luck.png', 999999, 999999, 0.49, 6),
-(2, 'MacBook Pro', 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mbp-spacegray-select-202206?wid=200&hei=200&fmt=png-alpha', 2, 2, 0.005, 1),
-(2, 'iPad Air', 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-air-select-wifi-blue-202203?wid=200&hei=200&fmt=png-alpha', 10, 10, 0.02, 2),
-(2, '200元购物卡', 'https://img.icons8.com/3d-fluency/200/gift-card.png', 50, 50, 0.08, 3),
-(2, '50元购物卡', 'https://img.icons8.com/3d-fluency/200/shopping-bag.png', 100, 100, 0.15, 4),
-(2, '谢谢参与', 'https://img.icons8.com/fluency/200/good-luck.png', 999999, 999999, 0.745, 5);
+(1, 'iPhone 15 Pro', '/images/prizes/iphone.svg', 5, 5, 0.01, 1),
+(1, 'AirPods Pro', '/images/prizes/airpods.svg', 20, 20, 0.05, 2),
+(1, '100元红包', '/images/prizes/redpack-100.svg', 100, 100, 0.10, 3),
+(1, '50元红包', '/images/prizes/redpack-50.svg', 200, 200, 0.15, 4),
+(1, '10元红包', '/images/prizes/redpack-10.svg', 500, 500, 0.20, 5),
+(1, '谢谢参与', '/images/prizes/thanks.svg', 999999, 999999, 0.49, 6),
+(2, 'MacBook Pro', '/images/prizes/macbook.svg', 2, 2, 0.005, 1),
+(2, 'iPad Air', '/images/prizes/ipad.svg', 10, 10, 0.02, 2),
+(2, '200元购物卡', '/images/prizes/giftcard-200.svg', 50, 50, 0.08, 3),
+(2, '50元购物卡', '/images/prizes/giftcard-50.svg', 100, 100, 0.15, 4),
+(2, '谢谢参与', '/images/prizes/thanks.svg', 999999, 999999, 0.745, 5);

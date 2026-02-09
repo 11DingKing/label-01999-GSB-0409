@@ -138,6 +138,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getActivityDetail, getActivityPrizes } from '@/api/activity'
 import { draw, getRemainingDrawCount } from '@/api/draw'
+import { getImageUrl } from '@/utils/image'
 
 const router = useRouter()
 const route = useRoute()
@@ -155,14 +156,14 @@ const lightOn = ref(true)
 
 let lightTimer = null
 const gridOrder = [0, 1, 2, 5, 8, 7, 6, 3]
-const defaultImage = 'https://img.icons8.com/color/200/gift.png'
+const defaultImage = '/api/images/prizes/thanks.svg'
 
 const canDraw = computed(() => drawCount.value && drawCount.value.dailyRemaining > 0)
 
 const gridItems = computed(() => {
   const items = []
   const prizeList = [...prizes.value]
-  const thanksPrize = prizeList.find(p => p.name === '谢谢参与') || { id: 0, name: '谢谢参与', image: 'https://img.icons8.com/fluency/200/good-luck.png' }
+  const thanksPrize = prizeList.find(p => p.name === '谢谢参与') || { id: 0, name: '谢谢参与', image: '/images/prizes/thanks.svg' }
   const realPrizes = prizeList.filter(p => p.name !== '谢谢参与')
   const thanksPositions = [2, 5, 7]
   const prizePositions = [0, 1, 3, 4, 6]
@@ -177,12 +178,15 @@ const gridItems = computed(() => {
   
   for (let i = 0; i < 9; i++) {
     if (i === 4) { items.push({ isCenter: true }) }
-    else { items.push(gridContent[gridOrder.indexOf(i)]) }
+    else { 
+      const item = gridContent[gridOrder.indexOf(i)]
+      items.push({ ...item, image: getImageUrl(item?.image) })
+    }
   }
   return items
 })
 
-const displayPrizes = computed(() => prizes.value.filter(p => p.name !== '谢谢参与'))
+const displayPrizes = computed(() => prizes.value.filter(p => p.name !== '谢谢参与').map(p => ({ ...p, image: getImageUrl(p.image) })))
 
 onMounted(() => {
   fetchActivityDetail()
@@ -217,7 +221,7 @@ async function handleDraw() {
   
   try {
     const res = await draw(activityId.value)
-    drawResult.value = res.data
+    drawResult.value = { ...res.data, prizeImage: getImageUrl(res.data.prizeImage) }
 
     let targetGridIndex = -1
     if (res.data.prizeId) {

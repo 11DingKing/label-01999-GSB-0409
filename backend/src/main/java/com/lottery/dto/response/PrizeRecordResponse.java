@@ -13,9 +13,13 @@ import java.time.LocalDateTime;
 public class PrizeRecordResponse {
 
     private Long id;
+    private Long userId;
+    private String username;
+    private String nickname;
     private Long prizeId;
     private String prizeName;
     private String prizeImage;
+    private Long activityId;
     private String activityName;
     private Integer status;
     private String statusText;

@@ -31,7 +31,9 @@ public enum ResultCode {
     PRIZE_STOCK_EMPTY(3003, "奖品库存不足"),
 
     RECORD_NOT_EXIST(4001, "记录不存在"),
-    RECORD_ALREADY_RECEIVED(4002, "奖品已领取");
+    RECORD_ALREADY_RECEIVED(4002, "奖品已领取"),
+
+    PRIZE_NOT_EXIST(5001, "奖品不存在");
 
     private final Integer code;
     private final String message;

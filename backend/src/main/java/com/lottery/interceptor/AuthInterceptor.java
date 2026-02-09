@@ -41,10 +41,12 @@ public class AuthInterceptor implements HandlerInterceptor {
         // 设置用户上下文
         Long userId = jwtUtil.getUserIdFromToken(token);
         String username = jwtUtil.getUsernameFromToken(token);
+        String role = jwtUtil.getRoleFromToken(token);
         UserContext.setUserId(userId);
         UserContext.setUsername(username);
+        UserContext.setRole(role);
 
-        log.debug("用户认证成功: userId={}, username={}", userId, username);
+        log.debug("用户认证成功: userId={}, username={}, role={}", userId, username, role);
         return true;
     }
 

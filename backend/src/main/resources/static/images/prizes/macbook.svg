@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="macGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a0aec0"/>
+      <stop offset="100%" style="stop-color:#718096"/>
+    </linearGradient>
+  </defs>
+  <rect x="15" y="20" width="70" height="45" rx="3" fill="url(#macGrad)" stroke="#4a5568" stroke-width="2"/>
+  <rect x="20" y="25" width="60" height="35" rx="1" fill="#1a202c"/>
+  <path d="M10 65 L90 65 L85 75 L15 75 Z" fill="#a0aec0" stroke="#4a5568" stroke-width="1"/>
+  <ellipse cx="50" cy="70" rx="15" ry="2" fill="#718096"/>
+</svg>

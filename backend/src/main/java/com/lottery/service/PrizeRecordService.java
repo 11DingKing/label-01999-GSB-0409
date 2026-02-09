@@ -24,4 +24,14 @@ public interface PrizeRecordService {
      * 获取最新中奖滚动列表
      */
     List<LatestWinnerResponse> getLatestWinners();
+
+    /**
+     * 获取所有中奖记录（管理端）
+     */
+    List<PrizeRecordResponse> getAllRecords(Long activityId);
+
+    /**
+     * 获取活动中奖统计
+     */
+    java.util.Map<String, Object> getActivityStats(Long activityId);
 }
