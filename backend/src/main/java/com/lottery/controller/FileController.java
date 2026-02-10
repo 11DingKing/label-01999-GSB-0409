@@ -3,6 +3,11 @@ package com.lottery.controller;
 import com.lottery.common.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -66,25 +71,28 @@ public class FileController {
     }
 
     @GetMapping("/{filename}")
-    public void getFile(@PathVariable String filename, 
-                        jakarta.servlet.http.HttpServletResponse response) {
+    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
         try {
-            Path filePath = Paths.get(uploadDir).resolve(filename);
-            if (!Files.exists(filePath)) {
-                response.setStatus(404);
-                return;
+            Path filePath = Paths.get(uploadDir).resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            
+            if (!resource.exists()) {
+                return ResponseEntity.notFound().build();
             }
 
             String contentType = Files.probeContentType(filePath);
             if (contentType == null) {
                 contentType = "application/octet-stream";
             }
-            response.setContentType(contentType);
-            Files.copy(filePath, response.getOutputStream());
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                    .body(resource);
 
         } catch (IOException e) {
-            log.error("文件读取失败", e);
-            response.setStatus(500);
+            log.error("文件读取失败: {}", filename, e);
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

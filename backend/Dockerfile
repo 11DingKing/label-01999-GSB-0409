@@ -16,6 +16,9 @@ FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
+# 创建上传目录
+RUN mkdir -p /app/uploads
+
 # 从构建阶段复制jar包
 COPY --from=builder /app/target/*.jar app.jar
 

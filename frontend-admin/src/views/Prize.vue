@@ -201,7 +201,7 @@
     <el-dialog 
       v-model="dialogVisible" 
       :title="isEdit ? '编辑奖品' : '新建奖品'" 
-      width="550px"
+      width="600px"
       destroy-on-close
     >
       <el-form 
@@ -252,18 +252,13 @@
           </div>
         </el-form-item>
         
-        <el-row :gutter="16">
-          <el-col :span="12">
-            <el-form-item label="奖品数量" prop="totalCount">
-              <el-input-number v-model="form.totalCount" :min="0" style="width: 100%" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="排序" prop="sortOrder">
-              <el-input-number v-model="form.sortOrder" :min="0" style="width: 100%" />
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <el-form-item label="奖品数量" prop="totalCount">
+          <el-input-number v-model="form.totalCount" :min="0" :max="9999999" class="wide-input-number" />
+        </el-form-item>
+        
+        <el-form-item label="排序" prop="sortOrder">
+          <el-input-number v-model="form.sortOrder" :min="0" class="wide-input-number" />
+        </el-form-item>
       </el-form>
       
       <template #footer>
@@ -311,7 +306,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Present, Plus, ArrowLeft, Refresh, Check } from '@element-plus/icons-vue'
@@ -384,6 +379,14 @@ function getStockClass(row) {
 onMounted(() => {
   fetchActivity()
   fetchList()
+})
+
+// 监听路由变化，每次进入页面都刷新数据
+watch(() => route.params.id, (newId) => {
+  if (newId) {
+    fetchActivity()
+    fetchList()
+  }
 })
 
 async function fetchActivity() {
@@ -674,6 +677,15 @@ async function handleDelete(id) {
 .probability-input {
   display: flex;
   align-items: center;
+}
+
+.wide-input-number {
+  width: 100%;
+  
+  :deep(.el-input-number__decrease),
+  :deep(.el-input-number__increase) {
+    border-radius: 4px;
+  }
 }
 
 .stock-dialog-content {

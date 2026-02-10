@@ -8,9 +8,12 @@
         </div>
         <span>中奖记录</span>
       </div>
-      <el-select v-model="selectedActivity" placeholder="全部活动" clearable style="width: 200px;" @change="fetchData">
-        <el-option v-for="a in activityList" :key="a.id" :label="a.name" :value="a.id" />
-      </el-select>
+      <div class="header-actions">
+        <el-select v-model="selectedActivity" placeholder="筛选活动" clearable style="width: 220px;" @change="fetchData">
+          <el-option label="全部活动" :value="null" />
+          <el-option v-for="a in activityList" :key="a.id" :label="a.name" :value="a.id" />
+        </el-select>
+      </div>
     </div>
 
     <!-- 统计卡片 -->
@@ -93,7 +96,13 @@
             </template>
           </el-table-column>
           
-          <el-table-column label="奖品信息" min-width="200">
+          <el-table-column label="所属活动" min-width="150">
+            <template #default="{ row }">
+              <el-tag type="info" effect="plain">{{ row.activityName || '-' }}</el-tag>
+            </template>
+          </el-table-column>
+          
+          <el-table-column label="奖品信息" min-width="180">
             <template #default="{ row }">
               <div class="prize-info">
                 <el-image 
@@ -107,7 +116,6 @@
                 </el-image>
                 <div class="prize-detail">
                   <div class="prize-name">{{ row.prizeName }}</div>
-                  <div class="prize-activity">{{ row.activityName }}</div>
                 </div>
               </div>
             </template>
@@ -148,7 +156,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { Trophy, Refresh } from '@element-plus/icons-vue'
 import { getAllRecords, getRecordStats } from '../api/record'
 import { getActivityList } from '../api/activity'
@@ -160,6 +169,7 @@ const stats = ref({})
 const activityList = ref([])
 const selectedActivity = ref(null)
 const filterStatus = ref(null)
+const route = useRoute()
 
 const pendingRecords = computed(() => records.value.filter(r => r.status === 0))
 const receivedRecords = computed(() => records.value.filter(r => r.status === 1))
@@ -172,6 +182,13 @@ const filteredRecords = computed(() => {
 onMounted(() => {
   fetchActivities()
   fetchData()
+})
+
+// 监听路由变化，每次进入页面都刷新数据
+watch(() => route.path, (newPath) => {
+  if (newPath === '/records') {
+    fetchData()
+  }
 })
 
 async function fetchActivities() {
@@ -314,5 +331,11 @@ function formatTime(time) {
 
 .text-muted {
   color: var(--text-muted);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 </style>

@@ -15,20 +15,20 @@ docker-compose down
 
 ## Services
 
-| 服务 | 端口 | 说明 |
-|------|------|------|
-| frontend-user | 8081 | 用户端前端 |
-| frontend-admin | 8082 | 管理后台前端 |
-| backend | 8088 | 后端 API 服务 |
-| mysql | 3306 | MySQL 数据库 |
-| redis | 6379 | Redis 缓存 |
+| 服务 | 端口 | 访问地址 | 说明 |
+|------|------|----------|------|
+| frontend-user | 8081 | http://localhost:8081 | 用户端前端 |
+| frontend-admin | 8082 | http://localhost:8082 | 管理后台前端 |
+| backend | 8088 | http://localhost:8088 | 后端 API 服务 |
+| mysql | 3306 | - | MySQL 数据库 |
+| redis | 6379 | - | Redis 缓存 |
 
 ## 测试账号
 
-| 用户名 | 密码 | 角色 |
-|--------|------|------|
-| testuser | 123456 | 普通用户 |
-| admin | admin123 | 管理员 |
+| 用户名 | 密码 | 角色 | 登录地址 |
+|--------|------|------|----------|
+| testuser | 123456 | 普通用户 | http://localhost:8081 |
+| admin | admin123 | 管理员 | http://localhost:8082 |
 
 ## 题目内容
 
@@ -42,15 +42,6 @@ docker-compose down
 
 - 后端：Java 17、Spring Boot 3.x、MyBatis Plus、MySQL 8.0、Redis 7、JWT
 - 前端：Vue 3、Vite 5、Element Plus、Pinia
-
-### 项目结构
-
-```
-├── backend/           # 后端服务 (Spring Boot)
-├── frontend-user/     # 用户端前端 (Vue 3)
-├── frontend-admin/    # 管理后台前端 (Vue 3)
-└── docker-compose.yml
-```
 
 ### 核心功能
 

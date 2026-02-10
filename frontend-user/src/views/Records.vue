@@ -128,13 +128,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getMyRecords, receivePrize } from '@/api/record'
 import { getImageUrl } from '@/utils/image'
 
 const router = useRouter()
+const route = useRoute()
 
 const loading = ref(false)
 const records = ref([])
@@ -165,6 +166,13 @@ const emptyDesc = computed(() => {
 
 onMounted(() => {
   fetchRecords()
+})
+
+// 监听路由变化，每次进入页面都刷新数据
+watch(() => route.path, (newPath) => {
+  if (newPath === '/records') {
+    fetchRecords()
+  }
 })
 
 async function fetchRecords() {

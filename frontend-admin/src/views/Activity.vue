@@ -274,8 +274,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Tickets, Plus, Present, Edit, Refresh, Warning, Check } from '@element-plus/icons-vue'
 import { getActivityList, createActivity, updateActivity, deleteActivity, onlineActivity, offlineActivity } from '../api/activity'
@@ -283,6 +283,7 @@ import { getPrizeList } from '../api/prize'
 import { uploadFile, getImageUrl } from '../api/file'
 
 const router = useRouter()
+const route = useRoute()
 const loading = ref(false)
 const activityList = ref([])
 const dialogVisible = ref(false)
@@ -327,6 +328,13 @@ const draftCount = computed(() => activityList.value.filter(a => a.status === 0)
 
 onMounted(() => {
   fetchList()
+})
+
+// 监听路由变化，每次进入页面都刷新数据
+watch(() => route.path, (newPath) => {
+  if (newPath === '/activity') {
+    fetchList()
+  }
 })
 
 async function fetchList() {
